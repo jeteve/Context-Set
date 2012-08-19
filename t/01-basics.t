@@ -25,7 +25,29 @@ my $users_context = $universe->restrict('users');
 cmp_ok( $users_context->name() , 'eq' , 'users' , "Ok name is good");
 cmp_ok( $users_context->restricted()->name() , 'eq' , $universe->name() , "Ok restricted right context");
 
-my $user1_ctx = $users_context->restrict('1');
-cmp_ok( $user1_ctx->name() , 'eq' , '1' , "Ok good name");
+$users_context->set_property('color' , 'blue');
+ok( $users_context->has_property('pi') , "Ok can find pi in the restriction too");
+ok( $users_context->has_property('color') , "Ok users have property color");
+cmp_ok( $users_context->get_property('color') , "eq" , 'blue' , "Ok can get color from users");
+
+{
+  ## Test context of user 1
+  my $user1_ctx = $users_context->restrict('1');
+  cmp_ok( $user1_ctx->name() , 'eq' , '1' , "Ok good name");
+  ok( $user1_ctx->has_property('pi') , "Ok user 1 knows pi");
+  ok( $user1_ctx->has_property('color') , "Ok user 1 knows color");
+  cmp_ok( $user1_ctx->get_property('pi') , '==' , 3.14159 , "Ok can get pi from user 1");
+  cmp_ok( $user1_ctx->get_property('color') , "eq" , 'blue' , "Ok can get color from user 1");
+}
+
+{
+  ## Test user 2.
+  my $user2_ctx = $users_context->restrict('2');
+  cmp_ok( $user2_ctx->get_property('color') , 'eq' , 'blue' , "Got color blue");
+  $user2_ctx->set_property('color' , 'black');
+  cmp_ok( $user2_ctx->get_property('color') , 'eq' , 'black' , "Got color black only in user 2");
+}
+
+
 
 done_testing();
