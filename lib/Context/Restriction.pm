@@ -10,6 +10,18 @@ has 'restricted' => ( is => 'ro' , isa => 'Context' , required => 1 , weak_ref =
 
 Context::Restriction - A restriction of a Context.
 
+=head2 SYNOPSYS
+
+   $general->has_property('a'); # General has 'a'
+
+   my $restriction = $general->restrict('specialized');
+
+   $restriction->has_property('a'); # The restriction inherits from the properties of general.
+
+   $restriction->set_property('b', 'value');
+   $restriction->has_property('b'); # ONLY the restriction has property b.
+
+
 =cut
 
 =head2 fullname
