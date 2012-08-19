@@ -32,7 +32,7 @@ sub fullname{
 
 =head2 restrict
 
-Produces a new context that is a restriction of this one.
+Produces a new Context::Restriction of this one.
 
 Usage:
 
@@ -53,6 +53,25 @@ sub restrict{
   require Context::Restriction;
   return Context::Restriction->new({ name => $restriction_name,
                                      restricted => $self });
+}
+
+=head2 unite
+
+Returns the Context::Union of this and the other context.
+
+usage:
+
+  my $u = $this->unite($other_context);
+
+=cut
+
+sub unite{
+  my ($self, $other) = @_;
+  unless( $other && $other->isa('Context') ){
+    confess("Missing other Context in unite");
+  }
+  require Context::Union;
+  return Context::Union->new({ contexts => [ $self, $other ] });
 }
 
 =head2 set_property
