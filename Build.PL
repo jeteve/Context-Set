@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
     },
     requires => {
         'perl' => 5.006,
+        'Moose' => 2.0401,
     },
     add_to_cleanup      => [ 'Context-*' ],
     create_makefile_pl => 'traditional',
