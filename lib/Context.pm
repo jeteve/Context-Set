@@ -14,10 +14,9 @@ Version 0.01
 
 =cut
 
-has 'name' => ( is => 'ro', isa => 'Str', required => 1 , default => 'UNIVERSE' );
+has 'name' => ( is => 'ro', isa => 'Str', default => 'UNIVERSE' );
 has 'properties' => ( is => 'ro' , isa => 'HashRef' , required => 1 , default => sub{ {}; } );
 
-use Context::Restriction;
 
 =head2 fullname
 
@@ -50,6 +49,8 @@ sub restrict{
   unless( $restriction_name ){
     confess("Missing restriction_name");
   }
+  ## Avoid circular dependencies.
+  require Context::Restriction;
   return Context::Restriction->new({ name => $restriction_name,
                                      restricted => $self });
 }

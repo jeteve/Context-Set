@@ -3,6 +3,7 @@ use Moose;
 
 extends qw/Context/;
 
+has '+name' => ( required => 1 );
 has 'restricted' => ( is => 'ro' , isa => 'Context' , required => 1 , weak_ref => 1 );
 
 =head1 NAME
@@ -48,4 +49,5 @@ sub get_property{
   return $self->restricted()->get_property($prop_name);
 }
 
+__PACKAGE__->meta->make_immutable();
 1;
