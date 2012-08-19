@@ -11,6 +11,17 @@ Context::Restriction - A restriction of a Context.
 
 =cut
 
+=head2 fullname
+
+See superclass.
+
+=cut
+
+sub fullname{
+  my ($self) = @_;
+  return $self->restricted()->fullname().'/'.$self->name();
+}
+
 =head2 has_property
 
 See superclass Context.

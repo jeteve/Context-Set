@@ -19,6 +19,18 @@ has 'properties' => ( is => 'ro' , isa => 'HashRef' , required => 1 , default =>
 
 use Context::Restriction;
 
+=head2 fullname
+
+Returns the fully qualified name of this context. The fullname of a context identifies the context
+in the UNIVERSE in a unique manner.
+
+=cut
+
+sub fullname{
+  my ($self) = @_;
+  return $self->name();
+}
+
 =head2 restrict
 
 Produces a new context that is a restriction of this one.

@@ -9,6 +9,8 @@ use Context;
 my $universe = Context->new();
 cmp_ok( $universe->name() , 'eq' , 'UNIVERSE'  , "Ok good universe name");
 
+cmp_ok( $universe->fullname() , 'eq' , 'UNIVERSE' , "Ok good fullname for universe");
+
 $universe->set_property('pi' , 3.14159 );
 $universe->set_property('null');
 
@@ -22,6 +24,7 @@ dies_ok { $universe->get_property('somethingelse') } "Fails to get a property th
 
 my $users_context = $universe->restrict('users');
 
+cmp_ok( $users_context->fullname(), "eq" , "UNIVERSE/users" , "Ok good fullname for users");
 cmp_ok( $users_context->name() , 'eq' , 'users' , "Ok name is good");
 cmp_ok( $users_context->restricted()->name() , 'eq' , $universe->name() , "Ok restricted right context");
 
@@ -43,6 +46,7 @@ cmp_ok( $users_context->get_property('color') , "eq" , 'blue' , "Ok can get colo
 {
   ## Test user 2.
   my $user2_ctx = $users_context->restrict('2');
+  cmp_ok( $user2_ctx->fullname() , 'eq' , 'UNIVERSE/users/2' , "Ok good fullname");
   cmp_ok( $user2_ctx->get_property('color') , 'eq' , 'blue' , "Got color blue");
   $user2_ctx->set_property('color' , 'black');
   cmp_ok( $user2_ctx->get_property('color') , 'eq' , 'black' , "Got color black only in user 2");
