@@ -1,0 +1,6 @@
+- Make the manager contagious.
+  Meaning that for any context built from the manager, building a context directly from it
+  will give a managed context, even if you don't build it through the manager.
+
+- Implement some persistance.
+  The manager should handle some persistance.
