@@ -6,11 +6,11 @@ use Moose;
 
 =head1 NAME
 
-Context - A config key holder.
+Context - A preference manager.
 
 =head1 INTRODUCTION
 
-Context is a framework that aims at solving the problem of storing configuration properties accross
+Context is a preference manager that aims at solving the problem of storing configuration properties accross
 an ever growing collection of contexts that often characterises enterprise systems.
 
 For instance, you might want to have a 'page colour' setting that is global to your system,
@@ -172,25 +172,6 @@ sub has_property{
   my ($self, $prop_name) = @_;
   return exists $self->properties()->{$prop_name};
 }
-
-=head1 SYNOPSIS
-
-## Top level 'universe' context.
-my $context = Context->new();
-
-## Restriction to user.1
-$context = $context->restrict('user.1');
-
-## Sets property in this context
-$context->property('whatever', [ v1, v2, ... ]);
-
-
-
-... Context can change ...
-
-## Get the property value in this context.
-my @values = $context->property('whatever');
-
 
 =head1 AUTHOR
 
