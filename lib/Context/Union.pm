@@ -13,7 +13,7 @@ Dies all the time. Using name makes no sense on a Context::Union
 
 sub name{
   my ($self) = @_;
-  confess("It doesnt make sense to call name on $self");
+  return;
 }
 
 =head1 NAME
