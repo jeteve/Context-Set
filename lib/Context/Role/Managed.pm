@@ -9,9 +9,6 @@ Context::Role::Managed - Make Managed context use the manager operations in plac
 
 has 'manager' => ( is => 'rw' , isa => 'Context::Manager', weak_ref => 1  );
 
-=head1 unite
-
-=cut
 
 override 'unite' => sub{
   my ($self , $other ) = @_;
