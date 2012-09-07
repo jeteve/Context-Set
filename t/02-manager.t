@@ -100,4 +100,21 @@ my $list45 = $cm->restrict('lists', 45);
 my $u23l45 = $cm->unite($u23 , $list45);
 cmp_ok( $u23l45->get_property('flavour'), 'eq' , 'vanilla' , "Got vanilla for any user, any list");
 
+{
+  ## Restrict lists and check that it's managed.
+  my $felix = $lists->restrict('felix');
+  ok( $cm->find('felix') , "Ok found felix in the manager, although its been created outside");
+
+  ## Unite felix with something else and check the union is managed.
+  my $union = $felix->unite($u23);
+  ok( $cm->find($union->fullname()) , "Ok can find the fullname of the union in the manager");
+
+  my $cm2 = Context::Manager->new();
+  my $aliens = $cm2->restrict('aliens');
+  ok( !$cm->find('aliens') , "No alien in main manager");
+  $union->unite($aliens);
+  ok( $cm->find('aliens') , "Aliens have been imported in the original manager");
+  ok( $cm->find($union->fullname()) , "New union can be found in the manager");
+}
+
 done_testing();

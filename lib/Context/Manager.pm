@@ -1,8 +1,11 @@
 package Context::Manager;
 use Moose;
+use Moose::Util;
 
 use Context;
+use Context::Restriction;
 use Context::Union;
+
 
 has '_localidx' => ( is => 'ro' , isa => 'HashRef[ArrayRef[Context]]', default => sub{ {}; });
 has '_fullidx' => ( is => 'ro' , isa => 'HashRef' , default => sub{ {}; } );
@@ -61,7 +64,12 @@ sub manage{
     $self->_localidx->{$localname} //= [];
     push @{$self->_localidx->{$localname}},  $context;
   }
-  return $self->_fullidx->{$context->fullname()} = $context;
+  $self->_fullidx->{$context->fullname()} = $context;
+  ## Apply the managed role to this new context so this manager is contagious.
+  Moose::Util::ensure_all_roles($context, 'Context::Role::Managed');
+  ## Dont forget to inject myself.
+  $context->manager($self);
+  return $context;
 }
 
 =head2 restrict
@@ -121,7 +129,8 @@ sub unite{
 
 sub _restrict_context{
   my ($self, $c1 , $new_name) = @_;
-  return $self->manage($c1->restrict($new_name));
+  return $self->manage(Context::Restriction->new({ name => $new_name,
+                                                   restricted => $c1 }));
 }
 
 =head2 find
@@ -136,12 +145,16 @@ Usage:
 
  $this->find('UNIVERSE/name1/name2');
 
+ if( $this->find($a_context) ){ ## Is this context in this manager
+
 =cut
 
 sub find{
   my ($self ,$name) = @_;
 
-  if( ref($name) ){ return $name; }
+  ## Dereference if its a reference. Will not work with anything
+  ## else but Contexts.
+  if( ref($name) ){ return $self->find($name->fullname()); }
 
   ## Case of fullname match
   if( my $c = $self->_fullidx()->{$name} ){ return $c;}
