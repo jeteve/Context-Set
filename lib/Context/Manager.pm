@@ -6,12 +6,17 @@ use Context;
 use Context::Restriction;
 use Context::Union;
 
+use Context::Storage::BlackHole;
 
 has '_localidx' => ( is => 'ro' , isa => 'HashRef[ArrayRef[Context]]', default => sub{ {}; });
 has '_fullidx' => ( is => 'ro' , isa => 'HashRef' , default => sub{ {}; } );
 
 has 'universe' => ( is => 'ro' , isa => 'Context' , required => 1 ,
                     lazy_build => 1 );
+
+has 'storage' => ( is => 'ro', isa => 'Context::Storage' , required => 1,
+                   default => sub{ return Context::Storage::BlackHole->new() } );
+
 
 =head1 NAME
 
@@ -65,10 +70,20 @@ sub manage{
     push @{$self->_localidx->{$localname}},  $context;
   }
   $self->_fullidx->{$context->fullname()} = $context;
+
+  ## Let the storage fill up the full context.
+  $self->storage()->populate_context($context);
+
   ## Apply the managed role to this new context so this manager is contagious.
-  Moose::Util::ensure_all_roles($context, 'Context::Role::Managed');
+  ## and it interact with the storage.
+  Moose::Util::ensure_all_roles($context,
+                                'Context::Role::Managed',
+                                'Context::Role::Stored',
+                               );
   ## Dont forget to inject myself.
   $context->manager($self);
+  ## and the storage
+  $context->storage($self->storage());
   return $context;
 }
 
