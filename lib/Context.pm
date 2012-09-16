@@ -61,7 +61,7 @@ Version 0.01
 =cut
 
 has 'name' => ( is => 'ro', isa => 'Str', default => 'UNIVERSE' );
-has 'properties' => ( is => 'ro' , isa => 'HashRef' , required => 1 , default => sub{ {}; } );
+has 'properties' => ( is => 'rw' , isa => 'HashRef' , required => 1 , default => sub{ {}; } );
 
 
 =head2 fullname

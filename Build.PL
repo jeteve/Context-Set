@@ -10,6 +10,8 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Context.pm',
     build_requires => {
         'Test::More' => 0,
+        'DBD::SQLite' => 1.35,
+        'DBIx::Class::Schema::Loader' => 0.07010,
     },
     requires => {
         'perl' => 5.006,
