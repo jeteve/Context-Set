@@ -76,6 +76,7 @@ my $storage = Context::Storage::DBIC->new({ resultset => $rs });
   dies_ok { $universe->get_property('somethingelse') } "Fails to get a property that is not there";
 
   my $users_context = $cm->restrict('users');
+  is_deeply( $users_context->get_property('beers') , [ 'duvel' , 'chimay' ] , "Ok good table of properties back");
   cmp_ok( $users_context->fullname(), "eq" , "UNIVERSE/users" , "Ok good fullname for users");
   cmp_ok( $users_context->name() , 'eq' , 'users' , "Ok name is good");
   cmp_ok( $users_context->restricted()->name() , 'eq' , $universe->name() , "Ok restricted right context");

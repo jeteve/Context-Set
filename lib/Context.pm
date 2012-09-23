@@ -4,9 +4,73 @@ our $VERSION = '0.01';
 
 use Moose;
 
+
+has 'name' => ( is => 'ro', isa => 'Str', default => 'UNIVERSE' );
+has 'properties' => ( is => 'rw' , isa => 'HashRef' , required => 1 , default => sub{ {}; } );
+
+
+sub fullname{
+  my ($self) = @_;
+  return $self->name();
+}
+
+
+sub restrict{
+  my ($self, $restriction_name) = @_;
+  unless( $restriction_name ){
+    confess("Missing restriction_name");
+  }
+  ## Avoid circular dependencies.
+  require Context::Restriction;
+  return Context::Restriction->new({ name => $restriction_name,
+                                     restricted => $self });
+}
+
+
+sub unite{
+  my ($self, $other) = @_;
+  unless( $other && $other->isa('Context') ){
+    confess("Missing other Context in unite");
+  }
+  require Context::Union;
+  return Context::Union->new({ contexts => [ $self, $other ] });
+}
+
+
+sub set_property{
+  my ($self, $prop_name, $value) = @_;
+  unless( defined $prop_name ){
+    confess("prop_name has to be a defined value");
+  }
+  $self->properties()->{$prop_name} = $value;
+}
+
+
+sub get_property{
+  my ($self, $prop_name) = @_;
+  unless( $self->has_property($prop_name) ){
+    confess("No property named $prop_name in ".$self->name());
+  }
+  return $self->properties()->{$prop_name};
+}
+
+
+sub has_property{
+  my ($self, $prop_name) = @_;
+  return exists $self->properties()->{$prop_name};
+}
+
+__PACKAGE__->meta->make_immutable();
+1;
+__END__
+
 =head1 NAME
 
 Context - A preference manager.
+
+=head1 VERSION
+
+Version 0.01
 
 =head1 INTRODUCTION
 
@@ -54,14 +118,7 @@ keep your contexts tidy for you.
   my $u1l2 = $cm->unite($user1 , $cm->restrict('lists' , 2));
   $u1l2->get_property('page.colour') ; # red
 
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-has 'name' => ( is => 'ro', isa => 'Str', default => 'UNIVERSE' );
-has 'properties' => ( is => 'rw' , isa => 'HashRef' , required => 1 , default => sub{ {}; } );
+=head1 METHODS
 
 
 =head2 fullname
@@ -69,12 +126,43 @@ has 'properties' => ( is => 'rw' , isa => 'HashRef' , required => 1 , default =>
 Returns the fully qualified name of this context. The fullname of a context identifies the context
 in the UNIVERSE in a unique manner.
 
-=cut
+=head2 name
 
-sub fullname{
-  my ($self) = @_;
-  return $self->name();
-}
+Returns the local name of this context. fullname is more useful.
+
+=head2 has_property
+
+Returns true if there is a property of this name in this context.
+
+Usage:
+
+ if( $this->has_property('pi') ){
+    ...
+ }
+
+=head2 get_property
+
+Gets the property that goes by the given name. Dies if no property with the given name can be found.
+
+my $pi = $this->get_property('pi');
+
+=head2 set_property
+
+Sets the given property to the given value. Never dies.
+
+Usage:
+
+  $this->set_property('pi' , 3.14159 );
+  $this->set_property('fibo', [ 1, 2, 3, 5, 8, 12, 20 ]);
+
+
+=head2 unite
+
+Returns the Context::Union of this and the other context.
+
+usage:
+
+  my $u = $this->unite($other_context);
 
 =head2 restrict
 
@@ -87,91 +175,6 @@ Usage:
 
   ## Further restriction to user 1
   $context = $context->restrict('1');
-
-=cut
-
-sub restrict{
-  my ($self, $restriction_name) = @_;
-  unless( $restriction_name ){
-    confess("Missing restriction_name");
-  }
-  ## Avoid circular dependencies.
-  require Context::Restriction;
-  return Context::Restriction->new({ name => $restriction_name,
-                                     restricted => $self });
-}
-
-=head2 unite
-
-Returns the Context::Union of this and the other context.
-
-usage:
-
-  my $u = $this->unite($other_context);
-
-=cut
-
-sub unite{
-  my ($self, $other) = @_;
-  unless( $other && $other->isa('Context') ){
-    confess("Missing other Context in unite");
-  }
-  require Context::Union;
-  return Context::Union->new({ contexts => [ $self, $other ] });
-}
-
-=head2 set_property
-
-Sets the given property to the given value. Never dies.
-
-Usage:
-
-  $this->set_property('pi' , 3.14159 );
-  $this->set_property('fibo', [ 1, 2, 3, 5, 8, 12, 20 ]);
-
-
-=cut
-
-sub set_property{
-  my ($self, $prop_name, $value) = @_;
-  unless( defined $prop_name ){
-    confess("prop_name has to be a defined value");
-  }
-  $self->properties()->{$prop_name} = $value;
-}
-
-=head2 get_property
-
-Gets the property that goes by the given name. Dies if no property with the given name can be found.
-
-my $pi = $this->get_property('pi');
-
-=cut
-
-sub get_property{
-  my ($self, $prop_name) = @_;
-  unless( $self->has_property($prop_name) ){
-    confess("No property named $prop_name in ".$self->name());
-  }
-  return $self->properties()->{$prop_name};
-}
-
-=head2 has_property
-
-Returns true if there is a property of this name in this context.
-
-Usage:
-
- if( $this->has_property('pi') ){
-    ...
- }
-
-=cut
-
-sub has_property{
-  my ($self, $prop_name) = @_;
-  return exists $self->properties()->{$prop_name};
-}
 
 =head1 AUTHOR
 
@@ -225,5 +228,3 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-__PACKAGE__->meta->make_immutable();
-1;

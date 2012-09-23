@@ -6,9 +6,47 @@ extends qw/Context::Storage/;
 
 Context::Storage::DBIC - Manage context persistence in a L<DBIx::Class::ResultSet>
 
+=head1 MANUAL
+
+This storage allows you to store your contexts and their values in a DBIC Resultset.
+
+This resultset MUST have the following columns:
+
+  id: A unique numeric ID. Be generous (BIG NUM) as this will be incremented each time there's
+     a new value for a property. This is the only unique key.
+
+  context_name: NOT NULL - A long enough VARCHAR. 512 is a good size. It must be able to contain
+                the longest context fullname possible for your application. No default.
+
+  key         : NOT NULL - A long enough VARCHAR. Must be able to contain the longest possible
+                property name for your application. No default.
+
+  is_array : NOT NULL - A boolean. No default.
+
+  value: CAN BE NULL. Something capable of holding any Perl string or number. VARCHAR(512) Is a good starting point.
+
+
+Additionaly you may want to consider adding the following indices:
+
+  (context_name)  and (context_name, key)
+
+
+Usage:
+
+  my $storage = Context::Storage::DBIC->new({ resultset => $schema->resultset('ContextValues') });
+  my $cm = Context::Manager->new({ storage => $storage });
+  ...
+
+
 =cut
 
 has 'resultset' => ( is => 'ro', isa => 'DBIx::Class::ResultSet' , required => 1 );
+
+=head2 populate_context
+
+See super class L<Context::Storage>
+
+=cut
 
 sub populate_context{
   my ($self,$context) = @_;
@@ -30,6 +68,12 @@ sub populate_context{
   ## Inject all of that in the context.
   $context->properties($properties);
 }
+
+=head2 set_context_property
+
+See superclass L<Context::Storage>
+
+=cut
 
 sub set_context_property{
   my ($self, $context, $prop , $v , $after ) = @_;
