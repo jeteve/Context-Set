@@ -24,16 +24,35 @@ Context::Set::Manager - A manager for your Context::Sets
 
 =head1 SYNOPSIS
 
-my $cm = Context::Set::Manager->new();
+  my $cm = Context::Set::Manager->new();
 
-my $users = $cm->restrict('users');
-$users->set_property('page.color' , 'blue');
+  my $users = $cm->restrict('users');
+  $users->set_property('page.color' , 'blue');
 
-my $user1 = $cm->restrict('users' , 1 );
-$user1->set_property('page.color' , 'pink');
+  my $user1 = $cm->restrict('users' , 1 );
 
-$user1->get_property('page.color'); # pink.
-$cm->restrict('users' , 2)->get_property('page.color'); # blue
+  ## OR
+
+  $user1 = $users->restrict(1);
+
+  $user1->set_property('page.color' , 'pink');
+
+  $user1->get_property('page.color'); # pink.
+
+  $cm->restrict('users' , 2)->get_property('page.color'); # blue
+
+  ## OR
+
+  $users->restrict(2)->get_property('page.color'); # blue
+
+=head2 PERSISTENCE
+
+Give your manager a L<Context::Set::Storage> subclass at build time. So all managed context persist using this storage.
+
+For example:
+
+ my $cm = Context::Set::Manager->new({ storage => an instance of Context::Set::Storage::DBIC });
+ ...
 
 =cut
 

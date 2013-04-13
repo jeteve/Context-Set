@@ -118,6 +118,12 @@ keep your contexts tidy for you.
   my $u1l2 = $cm->unite($user1 , $cm->restrict('lists' , 2));
   $u1l2->get_property('page.colour') ; # red
 
+=head1 PERSISTENCE
+
+To make context properties persistent accross instances of your application,
+see L<Context::Set::Manager>
+
+
 =head1 METHODS
 
 
