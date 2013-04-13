@@ -35,6 +35,17 @@ sub fullname{
   return $self->restricted()->fullname().'/'.$self->name();
 }
 
+=head2 is_in
+
+See superclass
+
+=cut
+
+sub is_in{
+  my ($self, $name) = @_;
+  return $self->name() eq $name || $self->restricted->is_in($name);
+}
+
 =head2 has_property
 
 See superclass Context.

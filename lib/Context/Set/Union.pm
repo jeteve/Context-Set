@@ -33,6 +33,22 @@ sub fullname{
   return 'union('.join(',', map{ $_->fullname() } @{$self->contexts} ).')';
 }
 
+=head2 is_in
+
+Only operates on the parent context in order.
+
+=cut
+
+sub is_in{
+  my ($self,$name) = @_;
+
+  foreach my $context  ( @{$self->contexts()} ){
+    if( $context->is_in($name) ){
+      return 1;
+    }
+  }
+}
+
 =head2 has_property
 
 See superclass Context::Set.

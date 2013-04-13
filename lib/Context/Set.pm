@@ -1,6 +1,6 @@
 package Context::Set;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Moose;
 
@@ -14,6 +14,10 @@ sub fullname{
   return $self->name();
 }
 
+sub is_in{
+  my ($self , $name) = @_;
+  return $self->name() eq $name;
+}
 
 sub restrict{
   my ($self, $restriction_name) = @_;
@@ -135,6 +139,14 @@ in the UNIVERSE in a unique manner.
 =head2 name
 
 Returns the local name of this context. fullname is more useful.
+
+=head2 is_in
+
+Returns true if this storage is inside (or itself) a context matching the given name.
+
+Usage:
+
+ if( $this->is_in('users') ){ ... }
 
 =head2 has_property
 

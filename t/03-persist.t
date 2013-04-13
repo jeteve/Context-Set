@@ -5,6 +5,7 @@ use Test::More;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 use Context::Set::Storage::DBIC;
+use Context::Set::Storage::Split;
 
 use DBI;
 use DBD::SQLite;
@@ -22,19 +23,56 @@ $dbh->do(q|CREATE TABLE contextvalue(id INTEGER PRIMARY KEY AUTOINCREMENT,
 context_name VARCHAR(512) NOT NULL,
 is_array BOOLEAN NOT NULL,
 key VARCHAR(512) NOT NULL,
-value VARCHAR(512));
-|);
+value VARCHAR(512));|);
+
+
+## For the split storage
+$dbh->do(q|
+CREATE TABLE aa(id INTEGER PRIMARY KEY AUTOINCREMENT,
+context_name VARCHAR(512) NOT NULL,
+is_array BOOLEAN NOT NULL,
+key VARCHAR(512) NOT NULL,
+value VARCHAR(512));|);
+
+$dbh->do(q|
+CREATE TABLE bb(id INTEGER PRIMARY KEY AUTOINCREMENT,
+context_name VARCHAR(512) NOT NULL,
+is_array BOOLEAN NOT NULL,
+key VARCHAR(512) NOT NULL,
+value VARCHAR(512));|);
 
 ## Build a schema dynamically.
 ok( my $schema = My::Schema->connect(sub{ return $dbh ;} , { unsafe => 1 } ), "Ok built schema with dbh");
-ok( my $rs = $schema->resultset('Contextvalue') , "Ok got resultset");
+cmp_ok( scalar($schema->sources) , 'eq' , 3 , "3 sources in schema");
 
+ok( my $rs = $schema->resultset('Contextvalue') , "Ok got resultset");
 
 ## And build a Context storage.
 my $storage_dbic = Context::Set::Storage::DBIC->new({ resultset => $rs });
 
+## We also need a split storage
+my $users_store = Context::Set::Storage::DBIC->new({ resultset => scalar($schema->resultset('Aa')) });
+my $general_store = Context::Set::Storage::DBIC->new({ resultset => scalar($schema->resultset('Bb')) });
 
-foreach my $storage ( $storage_dbic ){
+my $split_store = Context::Set::Storage::Split->new({
+                                                     rules => [{
+                                                                name => 'users_specific',
+                                                                test => sub{ shift->is_in('users'); },
+                                                                storage => $users_store
+                                                               },
+                                                               {
+                                                                name => 'lists_specific',
+                                                                test => sub{ shift->is_in('lists'); },
+                                                                storage => $general_store
+                                                               },
+                                                               {
+                                                                name => 'default',
+                                                                test => sub{ 1; },
+                                                                storage => $general_store
+                                                               }]
+                                                    });
+
+foreach my $storage ( $storage_dbic , $split_store ){
   {
     ## The manager under which stuff are stored
     my $cm = Context::Set::Manager->new({ storage => $storage });
@@ -109,5 +147,8 @@ foreach my $storage ( $storage_dbic ){
 
 }
 
+## Check users_store and list stores are not empty.
+ok( $users_store->resultset->count() , "Ok something is stored in the users_store");
+ok( $general_store->resultset->count() , "Ok something is stored in the general store");
 
 done_testing();
