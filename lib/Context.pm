@@ -66,7 +66,7 @@ __END__
 
 =head1 NAME
 
-Context - A preference manager.
+Context - A Contextual preference/configuration holder.
 
 =head1 VERSION
 
