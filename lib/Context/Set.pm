@@ -1,4 +1,4 @@
-package Context;
+package Context::Set;
 
 our $VERSION = '0.01';
 
@@ -21,19 +21,19 @@ sub restrict{
     confess("Missing restriction_name");
   }
   ## Avoid circular dependencies.
-  require Context::Restriction;
-  return Context::Restriction->new({ name => $restriction_name,
+  require Context::Set::Restriction;
+  return Context::Set::Restriction->new({ name => $restriction_name,
                                      restricted => $self });
 }
 
 
 sub unite{
   my ($self, $other) = @_;
-  unless( $other && $other->isa('Context') ){
+  unless( $other && $other->isa('Context::Set') ){
     confess("Missing other Context in unite");
   }
-  require Context::Union;
-  return Context::Union->new({ contexts => [ $self, $other ] });
+  require Context::Set::Union;
+  return Context::Set::Union->new({ contexts => [ $self, $other ] });
 }
 
 
@@ -66,7 +66,7 @@ __END__
 
 =head1 NAME
 
-Context - A Contextual preference/configuration holder.
+Context::Set - A Contextual preference/configuration holder.
 
 =head1 VERSION
 
@@ -89,10 +89,10 @@ and headaches. This module is an attempt to help you to keep those things tidy a
 
 =head1 SYNOPSIS
 
-To use Context, the best way is probably to use a Context::Manager that will
+To use Context, the best way is probably to use a Context::Set::Manager that will
 keep your contexts tidy for you.
 
-  my $cm = Context::Manager->new();
+  my $cm = Context::Set::Manager->new();
   $cm->universe()->set_property('page.colour' , 'blue');
 
   my $users = $cm->restrict('users');
@@ -158,7 +158,7 @@ Usage:
 
 =head2 unite
 
-Returns the Context::Union of this and the other context.
+Returns the Context::Set::Union of this and the other context.
 
 usage:
 
@@ -166,7 +166,7 @@ usage:
 
 =head2 restrict
 
-Produces a new Context::Restriction of this one.
+Produces a new Context::Set::Restriction of this one.
 
 Usage:
 
@@ -183,14 +183,14 @@ Jerome Eteve, C<< <jerome.eteve at gmail.com> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to C<bug-context at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Context>.  I will be notified, and then you'll
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Context::Set>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Context
+    perldoc Context::Set
 
 
 You can also look for information at:
@@ -199,15 +199,15 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Context>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Context::Set>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Context>
+L<http://annocpan.org/dist/Context::Set>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Context>
+L<http://cpanratings.perl.org/d/Context::Set>
 
 =item * Search CPAN
 

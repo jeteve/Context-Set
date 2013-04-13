@@ -1,13 +1,13 @@
-package Context::Union;
+package Context::Set::Union;
 use Moose;
 
-extends qw/Context/;
+extends qw/Context::Set/;
 
-has 'contexts' => ( is => 'ro' , isa => 'ArrayRef[Context]' , required => 1);
+has 'contexts' => ( is => 'ro' , isa => 'ArrayRef[Context::Set]' , required => 1);
 
 =head2 name
 
-Dies all the time. Using name makes no sense on a Context::Union
+Dies all the time. Using name makes no sense on a Context::Set::Union
 
 =cut
 
@@ -18,7 +18,7 @@ sub name{
 
 =head1 NAME
 
-Context::Union - A union of Contexts.
+Context::Set::Union - A union of Contexts.
 
 =cut
 
@@ -35,7 +35,7 @@ sub fullname{
 
 =head2 has_property
 
-See superclass Context.
+See superclass Context::Set.
 
 =cut
 

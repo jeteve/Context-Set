@@ -3,10 +3,10 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Fatal qw/dies_ok lives_ok/;
-use Context;
+use Context::Set;
 
 
-my $universe = Context->new();
+my $universe = Context::Set->new();
 cmp_ok( $universe->name() , 'eq' , 'UNIVERSE'  , "Ok good universe name");
 
 cmp_ok( $universe->fullname() , 'eq' , 'UNIVERSE' , "Ok good fullname for universe");

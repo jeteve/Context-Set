@@ -6,11 +6,11 @@ use Test::Fatal qw/dies_ok lives_ok/;
 
 package My::O;
 use Moose;
-with qw/Context::Holder/;
+with qw/Context::Set::Holder/;
 
 sub _build_context{
   ## Returns the universe.
-  return Context->new();
+  return Context::Set->new();
 }
 
 1;

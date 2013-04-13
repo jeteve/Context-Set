@@ -1,18 +1,18 @@
-package Context::Storage::BlackHole;
+package Context::Set::Storage::BlackHole;
 use Moose;
 
 =head1 NAME
 
-Context::Storage::BlackHole - A Storage that doesnt do anything.
+Context::Set::Storage::BlackHole - A Storage that doesnt do anything.
 
 =cut
 
-extends qw/Context::Storage/;
+extends qw/Context::Set::Storage/;
 
 
 =head2 populate_context
 
-See super class L<Context::Storage>
+See super class L<Context::Set::Storage>
 
 =cut
 
@@ -20,7 +20,7 @@ sub populate_context{}
 
 =head2 set_context_property
 
-See super class L<Context::Storage>
+See super class L<Context::Set::Storage>
 
 =cut
 

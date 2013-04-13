@@ -1,13 +1,13 @@
-package Context::Role::Managed;
+package Context::Set::Role::Managed;
 use Moose::Role;
 
 =head1 NAME
 
-Context::Role::Managed - Make Managed context use the manager operations in place of their native ones.
+Context::Set::Role::Managed - Make Managed context use the manager operations in place of their native ones.
 
 =cut
 
-has 'manager' => ( is => 'rw' , isa => 'Context::Manager', weak_ref => 1  );
+has 'manager' => ( is => 'rw' , isa => 'Context::Set::Manager', weak_ref => 1  );
 
 
 override 'unite' => sub{

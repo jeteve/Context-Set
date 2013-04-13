@@ -3,10 +3,10 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Fatal qw/dies_ok lives_ok/;
-use Context::Manager;
+use Context::Set::Manager;
 
 
-my $cm = Context::Manager->new();
+my $cm = Context::Set::Manager->new();
 my $universe = $cm->universe();
 cmp_ok( $universe->name() , 'eq' , 'UNIVERSE'  , "Ok good universe name");
 
@@ -109,7 +109,7 @@ cmp_ok( $u23l45->get_property('flavour'), 'eq' , 'vanilla' , "Got vanilla for an
   my $union = $felix->unite($u23);
   ok( $cm->find($union->fullname()) , "Ok can find the fullname of the union in the manager");
 
-  my $cm2 = Context::Manager->new();
+  my $cm2 = Context::Set::Manager->new();
   my $aliens = $cm2->restrict('aliens');
   ok( !$cm->find('aliens') , "No alien in main manager");
   $union->unite($aliens);

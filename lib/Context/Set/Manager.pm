@@ -1,30 +1,30 @@
-package Context::Manager;
+package Context::Set::Manager;
 use Moose;
 use Moose::Util;
 
-use Context;
-use Context::Restriction;
-use Context::Union;
+use Context::Set;
+use Context::Set::Restriction;
+use Context::Set::Union;
 
-use Context::Storage::BlackHole;
+use Context::Set::Storage::BlackHole;
 
-has '_localidx' => ( is => 'ro' , isa => 'HashRef[ArrayRef[Context]]', default => sub{ {}; });
+has '_localidx' => ( is => 'ro' , isa => 'HashRef[ArrayRef[Context::Set]]', default => sub{ {}; });
 has '_fullidx' => ( is => 'ro' , isa => 'HashRef' , default => sub{ {}; } );
 
-has 'universe' => ( is => 'ro' , isa => 'Context' , required => 1 ,
+has 'universe' => ( is => 'ro' , isa => 'Context::Set' , required => 1 ,
                     lazy_build => 1 );
 
-has 'storage' => ( is => 'ro', isa => 'Context::Storage' , required => 1,
-                   default => sub{ return Context::Storage::BlackHole->new() } );
+has 'storage' => ( is => 'ro', isa => 'Context::Set::Storage' , required => 1,
+                   default => sub{ return Context::Set::Storage::BlackHole->new() } );
 
 
 =head1 NAME
 
-Context::Manager - A manager for your Contexts
+Context::Set::Manager - A manager for your Context::Sets
 
 =head1 SYNOPSIS
 
-my $cm = Context::Manager->new();
+my $cm = Context::Set::Manager->new();
 
 my $users = $cm->restrict('users');
 $users->set_property('page.color' , 'blue');
@@ -40,14 +40,14 @@ $cm->restrict('users' , 2)->get_property('page.color'); # blue
 sub _build_universe{
   my ($self) = @_;
 
-  my $universe = Context->new();
+  my $universe = Context::Set->new();
   return $self->manage($universe);
 }
 
 
 =head2 manage
 
-Adds the given Context to this manager (in case it was built outside).
+Adds the given Context::Set to this manager (in case it was built outside).
 
 Note that if a context with an identical fullname is already there, it
 will return it. This is to ensure the unicity of contexts within the manager.
@@ -77,8 +77,8 @@ sub manage{
   ## Apply the managed role to this new context so this manager is contagious.
   ## and it interact with the storage.
   Moose::Util::ensure_all_roles($context,
-                                'Context::Role::Managed',
-                                'Context::Role::Stored',
+                                'Context::Set::Role::Managed',
+                                'Context::Set::Role::Stored',
                                );
   ## Dont forget to inject myself.
   $context->manager($self);
@@ -120,9 +120,9 @@ sub restrict{
 
 =head2 unite
 
-Returns the union of the given Contexts. You need to give at least two contexts.
+Returns the union of the given Context::Sets. You need to give at least two contexts.
 
-Contexts can be given by name or by references.
+Context::Sets can be given by name or by references.
 
 Usage:
 
@@ -134,17 +134,17 @@ Usage:
 sub unite{
   my ($self , @contexts ) = @_;
   unless( scalar(@contexts) >= 2 ){
-    confess("You need to unite at least 2 Contexts");
+    confess("You need to unite at least 2 Context::Sets");
   }
 
-  @contexts = map{ $self->find($_) or die "Cannot find Context to unite for '$_'" } @contexts;
-  return $self->manage(Context::Union->new({ contexts => \@contexts }));
+  @contexts = map{ $self->find($_) or die "Cannot find Context::Set to unite for '$_'" } @contexts;
+  return $self->manage(Context::Set::Union->new({ contexts => \@contexts }));
 }
 
 
 sub _restrict_context{
   my ($self, $c1 , $new_name) = @_;
-  return $self->manage(Context::Restriction->new({ name => $new_name,
+  return $self->manage(Context::Set::Restriction->new({ name => $new_name,
                                                    restricted => $c1 }));
 }
 
@@ -152,7 +152,7 @@ sub _restrict_context{
 
 Finds one context by the given name (local or full). Returns undef if nothing is found.
 
-If the name only match a local name and there's more that one Context with this name, the latest one will be returned.
+If the name only match a local name and there's more that one Context::Set with this name, the latest one will be returned.
 
 Usage:
 
@@ -168,7 +168,7 @@ sub find{
   my ($self ,$name) = @_;
 
   ## Dereference if its a reference. Will not work with anything
-  ## else but Contexts.
+  ## else but Context::Sets.
   if( ref($name) ){ return $self->find($name->fullname()); }
 
   ## Case of fullname match

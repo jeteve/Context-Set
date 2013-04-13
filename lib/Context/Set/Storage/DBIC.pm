@@ -1,10 +1,10 @@
-package Context::Storage::DBIC;
+package Context::Set::Storage::DBIC;
 use Moose;
-extends qw/Context::Storage/;
+extends qw/Context::Set::Storage/;
 
 =head1 NAME
 
-Context::Storage::DBIC - Manage context persistence in a L<DBIx::Class::ResultSet>
+Context::Set::Storage::DBIC - Manage context persistence in a L<DBIx::Class::ResultSet>
 
 =head1 MANUAL
 
@@ -33,8 +33,8 @@ Additionaly you may want to consider adding the following indices:
 
 Usage:
 
-  my $storage = Context::Storage::DBIC->new({ resultset => $schema->resultset('ContextValues') });
-  my $cm = Context::Manager->new({ storage => $storage });
+  my $storage = Context::Set::Storage::DBIC->new({ resultset => $schema->resultset('Context::SetValues') });
+  my $cm = Context::Set::Manager->new({ storage => $storage });
   ...
 
 
@@ -44,7 +44,7 @@ has 'resultset' => ( is => 'ro', isa => 'DBIx::Class::ResultSet' , required => 1
 
 =head2 populate_context
 
-See super class L<Context::Storage>
+See super class L<Context::Set::Storage>
 
 =cut
 
@@ -71,7 +71,7 @@ sub populate_context{
 
 =head2 set_context_property
 
-See superclass L<Context::Storage>
+See superclass L<Context::Set::Storage>
 
 =cut
 

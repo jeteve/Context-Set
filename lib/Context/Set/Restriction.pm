@@ -1,14 +1,14 @@
-package Context::Restriction;
+package Context::Set::Restriction;
 use Moose;
 
-extends qw/Context/;
+extends qw/Context::Set/;
 
 has '+name' => ( required => 1 );
-has 'restricted' => ( is => 'ro' , isa => 'Context' , required => 1 , weak_ref => 1 );
+has 'restricted' => ( is => 'ro' , isa => 'Context::Set' , required => 1 , weak_ref => 1 );
 
 =head1 NAME
 
-Context::Restriction - A restriction of a Context.
+Context::Set::Restriction - A restriction of a Context.
 
 =head2 SYNOPSYS
 

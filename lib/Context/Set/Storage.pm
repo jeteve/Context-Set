@@ -1,9 +1,9 @@
-package Context::Storage;
+package Context::Set::Storage;
 use Moose;
 
 =head1 NAME
 
-Context::Storage - A base class for context storages.
+Context::Set::Storage - A base class for context storages.
 
 =cut
 

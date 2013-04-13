@@ -1,10 +1,10 @@
-package Context::Holder;
+package Context::Set::Holder;
 use Moose::Role;
-use Context;
+use Context::Set;
 
 requires '_build_context';
 
-has 'context' => ( is => 'ro' , isa => 'Context' , lazy => 1, builder => '_build_context'  );
+has 'context' => ( is => 'ro' , isa => 'Context::Set' , lazy => 1, builder => '_build_context'  );
 
 1;
 __END__

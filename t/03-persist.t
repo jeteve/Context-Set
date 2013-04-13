@@ -3,8 +3,8 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Fatal qw/dies_ok lives_ok/;
-use Context::Manager;
-use Context::Storage::DBIC;
+use Context::Set::Manager;
+use Context::Set::Storage::DBIC;
 
 use DBI;
 use DBD::SQLite;
@@ -31,13 +31,13 @@ ok( my $rs = $schema->resultset('Contextvalue') , "Ok got resultset");
 
 
 ## And build a Context storage.
-my $storage_dbic = Context::Storage::DBIC->new({ resultset => $rs });
+my $storage_dbic = Context::Set::Storage::DBIC->new({ resultset => $rs });
 
 
 foreach my $storage ( $storage_dbic ){
   {
     ## The manager under which stuff are stored
-    my $cm = Context::Manager->new({ storage => $storage });
+    my $cm = Context::Set::Manager->new({ storage => $storage });
     my $universe = $cm->universe();
     cmp_ok( $universe->name() , 'eq' , 'UNIVERSE'  , "Ok good universe name");
     ok( $universe->storage() , "Ok universe has got a storage");
@@ -66,7 +66,7 @@ foreach my $storage ( $storage_dbic ){
 
   {
     ## Another manager with no value setting.
-    my $cm = Context::Manager->new({ storage => $storage });
+    my $cm = Context::Set::Manager->new({ storage => $storage });
     my $universe = $cm->universe();
     ok( $universe->has_property('pi') , "Ok universe has property pi");
     ok( $universe->has_property('null') , "Ok universe has property null");
