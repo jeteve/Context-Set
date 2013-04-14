@@ -2,6 +2,9 @@ package Context::Set::Storage::DBIC;
 use Moose;
 extends qw/Context::Set::Storage/;
 
+use Log::Log4perl;
+my $LOGGER = Log::Log4perl->get_logger();
+
 =head1 NAME
 
 Context::Set::Storage::DBIC - Manage context persistence in a L<DBIx::Class::ResultSet>
@@ -51,6 +54,11 @@ See super class L<Context::Set::Storage>
 sub populate_context{
   my ($self,$context) = @_;
 
+  my $rs = $self->resultset();
+  my $fullname = $context->fullname();
+
+  $LOGGER->debug("LOADING ".$fullname." from DBIC Rs ".$rs->result_source->name());
+
   my $kvs = $self->resultset->search_rs({ context_name => $context->fullname() },
                                         { order_by => [ 'key' , 'id' ] }
                                        );
@@ -88,17 +96,21 @@ sub set_context_property{
 
     my $fullname = $context->fullname();
 
+    my $rs =  $self->resultset();
+
+    $LOGGER->debug("SETTING On Rs:'".$rs->result_source->name()."' context:'".$fullname."' key:'".$prop."' value:[".join(',', map{ $_ // 'UNDEF' } @$v).']');
+
     ## Blat the key
-    $self->resultset()->search_rs({ context_name => $fullname,
-                                    key => $prop
-                                  })->delete();
+    $rs->search_rs({ context_name => $fullname,
+                     key => $prop
+                   })->delete();
 
     foreach my $value ( @$v ){
-      $self->resultset()->create({ context_name => $fullname,
-                                   key => $prop,
-                                   value => $value,
-                                   is_array => $is_array
-                                 });
+      $rs->create({ context_name => $fullname,
+                    key => $prop,
+                    value => $value,
+                    is_array => $is_array
+                  });
     }
     return &{$after}();
   };

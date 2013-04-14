@@ -16,6 +16,7 @@ my $builder = Module::Build->new(
     requires => {
         'perl' => 5.006,
         'Moose' => 2.0401,
+        'Log::Log4perl' => 1.29,
     },
     add_to_cleanup      => [ 'Context-Set-*' ],
     create_makefile_pl => 'traditional',

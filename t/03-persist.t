@@ -10,6 +10,9 @@ use Context::Set::Storage::Split;
 use DBI;
 use DBD::SQLite;
 
+use Log::Log4perl qw/:easy/;
+Log::Log4perl->easy_init($DEBUG);
+
 package My::Schema;
 ## This is a schema that will be build dynamically.
 use base qw/DBIx::Class::Schema::Loader/;
