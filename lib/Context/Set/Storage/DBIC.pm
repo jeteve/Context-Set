@@ -43,7 +43,7 @@ Usage:
 
 =cut
 
-has 'resultset' => ( is => 'ro', isa => 'DBIx::Class::ResultSet' , required => 1 );
+has 'resultset' => ( is => 'rw', isa => 'DBIx::Class::ResultSet' , required => 1 );
 
 =head2 populate_context
 

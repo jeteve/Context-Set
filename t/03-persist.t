@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 59;
+use Test::More tests => 60;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 use Context::Set::Storage::DBIC;
@@ -153,5 +153,6 @@ foreach my $storage ( $storage_dbic , $split_store ){
 ## Check users_store and list stores are not empty.
 ok( $users_store->resultset->count() , "Ok something is stored in the users_store");
 ok( $general_store->resultset->count() , "Ok something is stored in the general store");
+ok( $split_store->rule('default') , "Ok can get the default rule from the split store");
 
 done_testing();

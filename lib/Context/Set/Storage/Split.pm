@@ -14,7 +14,7 @@ Context::Set::Storage::Split - Split storage of Context::Set accross different L
 
 
 has 'rules' => ( is => 'ro', isa => 'ArrayRef[Context::Set::Storage::Split::Rule]', required => 1);
-
+has '_rules_idx' => ( is => 'ro' , isa => 'HashRef[Context::Set::Storage::Split::Rule]', required => 1);
 
 
 =head2 BUILDARGS
@@ -30,12 +30,31 @@ sub BUILDARGS{
 
   ## Replace rules by an array of real rules.
   my @new_rules = ();
+  my %rules_idx;
   foreach my $rule ( @{ $args->{rules} // confess "Missing rules in args" } ){
-    push @new_rules , Context::Set::Storage::Split::Rule->new($rule);
+    my $new_rule = Context::Set::Storage::Split::Rule->new($rule);
+    push @new_rules , $new_rule;
+    $rules_idx{$new_rule->name()} = $new_rule;
   }
 
+  $args->{_rules_idx} = \%rules_idx;
   $args->{rules} = \@new_rules;
   return $args;
+}
+
+=head2 rule
+
+Returns a rule by name.
+
+Usage:
+
+ $self->rule('myrule')->...
+
+=cut
+
+sub rule{
+  my ($self, $name) = @_;
+  return $self->_rules_idx->{$name};
 }
 
 =head2 populate_context
