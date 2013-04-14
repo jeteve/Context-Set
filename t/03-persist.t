@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 59;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 use Context::Set::Storage::DBIC;
@@ -57,12 +57,12 @@ my $general_store = Context::Set::Storage::DBIC->new({ resultset => scalar($sche
 my $split_store = Context::Set::Storage::Split->new({
                                                      rules => [{
                                                                 name => 'users_specific',
-                                                                test => sub{ shift->is_in('users'); },
+                                                                test => sub{ shift->is_inside('users'); },
                                                                 storage => $users_store
                                                                },
                                                                {
                                                                 name => 'lists_specific',
-                                                                test => sub{ shift->is_in('lists'); },
+                                                                test => sub{ shift->is_inside('lists'); },
                                                                 storage => $general_store
                                                                },
                                                                {

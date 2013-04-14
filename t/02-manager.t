@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 39;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 

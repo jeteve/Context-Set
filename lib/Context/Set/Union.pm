@@ -33,17 +33,17 @@ sub fullname{
   return 'union('.join(',', map{ $_->fullname() } @{$self->contexts} ).')';
 }
 
-=head2 is_in
+=head2 is_inside
 
 Only operates on the parent context in order.
 
 =cut
 
-sub is_in{
+sub is_inside{
   my ($self,$name) = @_;
 
   foreach my $context  ( @{$self->contexts()} ){
-    if( $context->is_in($name) ){
+    if( $context->is_inside($name) ){
       return 1;
     }
   }

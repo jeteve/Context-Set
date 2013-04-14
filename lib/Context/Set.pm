@@ -14,7 +14,7 @@ sub fullname{
   return $self->name();
 }
 
-sub is_in{
+sub is_inside{
   my ($self , $name) = @_;
   return $self->name() eq $name;
 }
@@ -140,13 +140,15 @@ in the UNIVERSE in a unique manner.
 
 Returns the local name of this context. fullname is more useful.
 
-=head2 is_in
+=head2 is_inside
 
-Returns true if this storage is inside (or itself) a context matching the given name.
+Returns true if this storage is inside a context matching the given name.
+
+Note that this excludes this Context::Set
 
 Usage:
 
- if( $this->is_in('users') ){ ... }
+ if( $this->is_inside('users') ){ ... }
 
 =head2 has_property
 
