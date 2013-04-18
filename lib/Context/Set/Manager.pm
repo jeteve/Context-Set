@@ -16,7 +16,7 @@ has 'universe' => ( is => 'ro' , isa => 'Context::Set' , required => 1 ,
 
 has 'storage' => ( is => 'ro', isa => 'Context::Set::Storage' , required => 1,
                    default => sub{ return Context::Set::Storage::BlackHole->new() } );
-
+has 'autoreload' => ( is => 'ro', isa => 'Bool', default => 0 );
 
 =head1 NAME
 
@@ -54,6 +54,19 @@ For example:
  my $cm = Context::Set::Manager->new({ storage => an instance of Context::Set::Storage::DBIC });
  ...
 
+
+=head2 CONCURRENCY
+
+If your manager lives in a process and a stored value is changed by another process,
+you can set this to autoreload the managed contexts on access. Use the option autoreload for that
+(Note that it only makes sense with a Persistent storage (see PERSISTENCE):
+
+ my $cm = Context::Set::Manager->new({ storage => an instance of Context::Set::Storage::DBIC,
+                                       autoreload => 1 });
+
+Note: Performance might be impacted. This will be solved in the future by implementing cachable
+storages.
+
 =cut
 
 sub _build_universe{
@@ -81,6 +94,9 @@ sub manage{
   my ($self , $context) = @_;
 
   if( my $there = $self->_fullidx()->{$context->fullname()} ){
+    if( $self->autoreload() ){
+      $self->storage->populate_context($there);
+    }
     return $there;
   }
 

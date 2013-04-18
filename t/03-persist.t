@@ -107,7 +107,7 @@ foreach my $storage ( $storage_dbic , $split_store ){
 
   {
     ## Another manager with no value setting.
-    my $cm = Context::Set::Manager->new({ storage => $storage });
+    my $cm = Context::Set::Manager->new({ storage => $storage, autoreload => 1 });
     my $universe = $cm->universe();
     ok( $universe->has_property('pi') , "Ok universe has property pi");
     ok( $universe->has_property('null') , "Ok universe has property null");
