@@ -104,7 +104,7 @@ sub set_context_property{
     $rs->search_rs({ context_name => $fullname,
                      key => $prop
                    })->delete();
-
+    ## And record each value (can be an array)
     foreach my $value ( @$v ){
       $rs->create({ context_name => $fullname,
                     key => $prop,
@@ -117,6 +117,25 @@ sub set_context_property{
   return $self->resultset->result_source->schema()->txn_do($stuff);
 }
 
+=head2 delete_context_property
+
+See superclass L<Context::Set::Storage>
+
+=cut
+
+sub delete_context_property{
+  my ($self, $context, $prop, $after) = @_;
+  my $rs  = $self->resultset();
+  my $stuff = sub{
+    my $fullname = $context->fullname();
+    $LOGGER->debug("DELETING On RS '".$rs->result_source->name()."' context:'".$fullname."' key:'".$prop."'");
+    $rs->search_rs({ context_name => $fullname,
+                     key => $prop
+                   })->delete();
+    return &{$after}();
+  };
+  return $rs->result_source->schema()->txn_do($stuff);
+}
 
 __PACKAGE__->meta->make_immutable();
 1;

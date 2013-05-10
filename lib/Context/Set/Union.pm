@@ -102,5 +102,15 @@ sub get_property{
   confess("Cannot find property $prop_name anywhere in ".$self->fullname());
 }
 
+sub _lookup_parents{
+  my ($self,$pname) = @_;
+  foreach my $context ( @{$self->contexts()} ){
+    if( my $hit = $context->lookup($pname) ){
+      return $hit;
+    }
+  }
+  return undef;
+}
+
 __PACKAGE__->meta->make_immutable();
 1;

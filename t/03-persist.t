@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 60;
+use Test::More tests => 64;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 use Context::Set::Storage::DBIC;
@@ -146,6 +146,9 @@ foreach my $storage ( $storage_dbic , $split_store ){
     cmp_ok( $u1l1->get_property('flavour') , 'eq' ,'apple' , "u1l1 has apple flavour");
     cmp_ok( $list1->get_property('flavour') , 'eq' , 'blueberry' , "Ok list 1 has blueberry");
     cmp_ok( $user1_ctx->get_property('flavour') , 'eq', 'banana' , "Ok user1 has got banana");
+    is_deeply( $user1_ctx->lookup('beers')->delete_property('beers') , [ 'duvel' , 'chimay' ] , "Ok can delete beers from user1");
+    ## Now its just stella for the universe.
+    is_deeply( $user1_ctx->get_property('beers') , [ 'stella' ] , "Ok got only stella");
   }
 
 }

@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 28;
+use Test::More tests => 30;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set;
 
@@ -86,5 +86,9 @@ cmp_ok( $u23l1->get_property('flavour') , 'eq' , 'blueberry', "Got blueberry for
 my $list45 = $lists->restrict(45);
 my $u23l45 = $u23->unite($list45);
 cmp_ok( $u23l45->get_property('flavour'), 'eq' , 'vanilla' , "Got vanilla for any user, any list");
+
+is( $list1->delete_property('flavour') , 'blueberry' , "Ok can delete flavour from list 1");
+cmp_ok( $u23l1->get_property('flavour') , 'eq' , 'vanilla', "Got vanilla ( as opposed to blueberry )");
+
 
 done_testing();

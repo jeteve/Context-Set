@@ -20,4 +20,13 @@ around 'set_property' => sub{
                                               });
 };
 
+around 'delete_property' => sub{
+  my ($orig, $self, $prop) = @_;
+  return $self->storage->delete_context_property($self,
+                                                 $prop,
+                                                 sub{
+                                                   $self->$orig($prop);
+                                                 });
+};
+
 1;
