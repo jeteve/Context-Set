@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 60;
+use Test::More tests => 64;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 use Context::Set::Storage::DBIC;
@@ -120,6 +120,14 @@ foreach my $storage ( $storage_dbic , $split_store ){
 
     my $users_context = $cm->restrict('users');
     is_deeply( $users_context->get_property('beers') , [ 'duvel' , 'chimay' ] , "Ok good table of properties back");
+    ## Fiddle with the property hash of this context.
+    ## To check the refresh_from_storage method does its job
+    $users_context->properties()->{beers} = 'NOTHING';
+    is( $users_context->get_property('beers') , 'NOTHING' , "Fiddling with properties worked");
+
+    $users_context->refresh_from_storage();
+    is_deeply( $users_context->get_property('beers') , [ 'duvel' , 'chimay' ] , "Refreshing the context from storage pulled the right properties back again");
+
     cmp_ok( $users_context->fullname(), "eq" , "UNIVERSE/users" , "Ok good fullname for users");
     cmp_ok( $users_context->name() , 'eq' , 'users' , "Ok name is good");
     cmp_ok( $users_context->restricted()->name() , 'eq' , $universe->name() , "Ok restricted right context");

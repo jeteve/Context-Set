@@ -20,4 +20,21 @@ around 'set_property' => sub{
                                               });
 };
 
+=head2 refresh_from_storage
+
+Refreshes this context from the storage it is stored in.
+
+Usage:
+
+ $this->refresh_from_storage();
+
+=cut
+
+sub refresh_from_storage{
+  my ($self) = @_;
+  $self->storage->populate_context($self);
+  return $self;
+}
+
+
 1;
