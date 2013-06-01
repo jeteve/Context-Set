@@ -10,6 +10,36 @@ Context::Set::Storage::Split - Split storage of Context::Set accross different L
 
 =head1 MANUAL
 
+Contexts are dispatched accross different storage according to a set of rules.
+
+A rule should have:
+
+  - name : This is free and mandatory.
+  - test: A Code Ref that test a given context (see example).
+  - storage: Where to store the contexts that pass the test. Should be an instance of any subclass of L<Context::Set::Storage>
+
+Rules are tested in the order of the definition, so the default one should
+go at the end of the list. If you don't specify a default, this storage will die if
+no rule matches the context you make it manage.
+
+For example:
+
+   $users_store and $general_store are instances of L<Context::Set::Storage>
+
+   ## Store the contexts unders 'users' in a special store, all the rest in a general one.
+   my $split_store = Context::Set::Storage::Split->new({
+                                                     rules => [{
+                                                                name => 'users_specific',
+                                                                test => sub{ shift->is_inside('users'); },
+                                                                storage => $users_store
+                                                               },
+                                                               {
+                                                                name => 'default',
+                                                                test => sub{ 1; },
+                                                                storage => $general_store
+                                                               }]
+                                                    });
+
 =cut
 
 
@@ -79,7 +109,20 @@ sub set_context_property{
   return $self->_matching_storage($context)->set_context_property($context,$prop,$v,$after);
 }
 
+=head2 delete_context_property
 
+See superclass L<Context::Set::Storage>
+
+=cut
+
+sub delete_context_property{
+  my ($self, $context , $prop , $after) = @_;
+  return $self->_matching_storage($context)->delete_context_property($context,$prop,$after);
+}
+
+
+## Return the storage for the given context according to
+## the rules.
 sub _matching_storage{
   my ($self, $context) = @_;
 

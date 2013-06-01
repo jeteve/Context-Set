@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 39;
+use Test::More tests => 42;
 use Test::Fatal qw/dies_ok lives_ok/;
 use Context::Set::Manager;
 
@@ -69,9 +69,11 @@ diag("Got union: ".$u1l1->fullname());
 
 ## Setting flavour in different contexts:
 $universe->set_property('flavour', 'vanilla');
+$universe->set_property('smell', 'rose');
 $user1_ctx->set_property('flavour' , 'banana');
 $list1->set_property('flavour', 'blueberry');
 $u1l1->set_property('flavour' , 'apple');
+$list1->set_property('smell' , 'caramel');
 
 ## Testing we got the right values in different contexts
 my $list2 = $cm->restrict('lists', '2');
@@ -87,8 +89,12 @@ cmp_ok( $u2l2->get_property('flavour') , 'eq' , 'vanilla' , 'Got vanilla for any
 
 ## here we'll use the flavour of list1 (blueberry), because the flavour on the user
 ## is in the super context only.
-my $u2l1 = $cm->unite($user2_ctx , $list1);
+## The order is important.
+my $u2l1 = $cm->unite( $list1, $user2_ctx );
 cmp_ok( $u2l1->get_property('flavour') , 'eq' , 'blueberry' , "Got blueberry for any user , list 1");
+is( $u2l1->get_property('smell') , 'caramel' , "list 1 smells of caramel for all users");
+is( $u2l1->lookup('smell')->delete_property('smell') , 'caramel' , "Can delete caramel from list1");
+is( $u2l1->get_property('smell') , 'rose' , "list1 now smells of rose, like the universe");
 
 cmp_ok( $u1l1->get_property('flavour'), 'eq' , 'apple', "Got apple for user 1, list 1");
 
@@ -116,5 +122,6 @@ cmp_ok( $u23l45->get_property('flavour'), 'eq' , 'vanilla' , "Got vanilla for an
   ok( $cm->find('aliens') , "Aliens have been imported in the original manager");
   ok( $cm->find($union->fullname()) , "New union can be found in the manager");
 }
+
 
 done_testing();

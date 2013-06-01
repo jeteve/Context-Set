@@ -72,5 +72,10 @@ sub get_property{
   return $self->restricted()->get_property($prop_name);
 }
 
+sub _lookup_parents{
+  my ($self,$propname) = @_;
+  return $self->restricted->lookup($propname);
+}
+
 __PACKAGE__->meta->make_immutable();
 1;

@@ -64,6 +64,26 @@ sub has_property{
   return exists $self->properties()->{$prop_name};
 }
 
+sub delete_property{
+  my ($self, $prop_name) = @_;
+  unless( $self->has_property($prop_name) ){
+    confess("No property named $prop_name in ".$self->name()." cannot delete it");
+  }
+  return delete $self->properties()->{$prop_name};
+}
+
+sub lookup{
+  my ($self, $prop_name) = @_;
+  unless( $prop_name ){ confess("Missing prop_name"); }
+  return $self if $self->properties()->{$prop_name};
+  return $self->_lookup_parents($prop_name);
+}
+
+sub _lookup_parents{
+  my ($self, $pname) = @_;
+  return undef;
+}
+
 __PACKAGE__->meta->make_immutable();
 1;
 __END__
@@ -175,6 +195,27 @@ Usage:
   $this->set_property('pi' , 3.14159 );
   $this->set_property('fibo', [ 1, 2, 3, 5, 8, 12, 20 ]);
 
+=head2 delete_property
+
+Deletes the given property from this context. Dies if no property with this name exists.
+
+Returns the current value of this property (so you have a chance to look at it a last time
+before it goes away).
+
+Usage:
+
+  my $deleted_value = $this->delete_property('pi');
+
+
+=head2 lookup
+
+Returns the context holding the given property or undef if none is found.
+
+Usage:
+
+  if( my $holder_context = $context->lookup('pi') ){
+     ## $holder_context is the first context holding this property.
+  }
 
 =head2 unite
 

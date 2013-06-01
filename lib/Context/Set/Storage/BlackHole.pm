@@ -29,5 +29,16 @@ sub set_context_property{
   return &{$after}();
 }
 
+=head2 delete_context_property
+
+See superclass L<Context::Set::Storage>
+
+=cut
+
+sub delete_context_property{
+  my ($self, $context, $prop , $after) = @_;
+  return &{$after}();
+}
+
 __PACKAGE__->meta->make_immutable();
 1;
