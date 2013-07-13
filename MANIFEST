@@ -25,3 +25,6 @@ t/manifest.t
 t/pod-coverage.t
 t/pod.t
 TODO
+Makefile.PL
+META.yml
+META.json
