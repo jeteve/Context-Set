@@ -9,6 +9,8 @@ lib/Context/Set/Role/Stored.pm
 lib/Context/Set/Storage.pm
 lib/Context/Set/Storage/BlackHole.pm
 lib/Context/Set/Storage/DBIC.pm
+lib/Context/Set/Storage/Split.pm
+lib/Context/Set/Storage/Split/Rule.pm
 lib/Context/Set/Union.pm
 MANIFEST			This list of files
 README
